@@ -246,7 +246,7 @@ def nb_simulate_lidar(robot_pose, angles, img):
     
     for angulo in a:
         # Faz o angulo ser relativo ao robo
-        ang = robot_pose[theta]+angulo
+        ang = (robot_pose[theta]+angulo)%(2*math.pi)
         #print("Angle ", ang)
         xa, ya = x0, y0
         x = xa

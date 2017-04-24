@@ -19,6 +19,8 @@ from helper_functions import (convert_pose_inverse_transform,
                               convert_translation_rotation_to_pose,
                               convert_pose_to_xy_and_theta,
                               angle_diff)
+                              
+from copy import deepcopy
 
 class Particle(object):
     """ Represents a hypothesis (particle) of the robot's pose consisting of x,y and theta (yaw)
@@ -29,7 +31,7 @@ class Particle(object):
             w: the particle weight (the class does not ensure that particle weights are normalized
     """ 
 
-    def __init__(self,x=0.0,y=0.0,theta=0.0,w=1.0):
+    def __init__(self,x ,y ,theta ,w):
         """ Construct a new Particle
             x: the x-coordinate of the hypothesis relative to the map frame
             y: the y-coordinate of the hypothesis relative ot the map frame
@@ -47,7 +49,8 @@ class Particle(object):
             return self.y
         if key==2:
             return self.theta
-        return self.w
+        if key==3:
+            return self.w
         
     def __setitem__(self, key, value):
         if key==0:
@@ -56,7 +59,9 @@ class Particle(object):
             self.y= value
         if key==2:
             self.theta= value
-        self.w= value
+        if key==3:
+            self.w= w
+        
 
     def as_pose(self):
         """ A helper function to convert a particle to a geometry_msgs/Pose message """

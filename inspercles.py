@@ -64,7 +64,7 @@ def draw_initial_pose(pose_xytheta, ax):
     #end_y = y + deltay
     nb_draw_arrow(x, y, theta, ax, l=l, color='r', width=2, headwidth=6, headlength=6)
     
-def nb_draw_arrow(x, y, theta, ax, l = 15, color='y', headwidth=3.0, headlength=3, width=0.001):
+def nb_draw_arrow(x, y, theta, ax, l = 15, color='y', headwidth=3.0, headlength=3, width=0.001, alpha=1.0):
     """
         Desenha uma seta na posição x, y com um ângulo theta
         ax é o contexto gráfico
@@ -72,7 +72,8 @@ def nb_draw_arrow(x, y, theta, ax, l = 15, color='y', headwidth=3.0, headlength=
     """
     deltax = l*math.cos(theta)
     deltay = l*math.sin(theta)
-    ax.arrow(x, y, deltax, deltay, head_width=headwidth, head_length=headlength, fc=color,  ec=color, width=width)
+    #ax.arrow(x, y, deltax, deltay, head_width=headwidth, head_length=headlength, fc=color,  ec=color, width=width)
+    ax.arrow(x, y, deltax, deltay, head_width=headwidth, head_length=headlength, fc=color,  ec=color, width=width, alpha=alpha)
 
 def nb_draw_particle_cloud(particles, ax):
     """
@@ -81,7 +82,7 @@ def nb_draw_particle_cloud(particles, ax):
         ax - eixo
     """
     for p in particles:
-        nb_draw_arrow(p.x, p.y, p.theta, ax, particle_size, color='b')
+        nb_draw_arrow(p.x, p.y, p.theta, ax, particle_size, color='b', alpha=(0.1 + 0.9*p.w))
 
 def normalize_particles(particle_cloud):
     # 
@@ -198,7 +199,7 @@ def nb_outside_image(x, y, img):
 def nb_found_obstacle(x, y, x0, y0, img):
     gray_value = 1.0 - img[x][y]/255.0
     if gray_value > free_thresh and gray_value < occupied_thresh:
-        return math.sqrt( (x0 - x)**2 + (y0 - x)**2 )
+        return math.sqrt( (x0 - x)**2 + (y0 - y)**2 )
 
         
     
@@ -258,13 +259,13 @@ def nb_simulate_lidar(robot_pose, angles, img):
             result_img[int(y), int(x)] = 0 # Marcamos o raio na imagem y,x porque numpy e' linha, coluna
             if nb_outside_image(int(x), int(y), img):
                 # A imagem acabou, nao achamos nada
-                lidar_results[ang] = -1   
-                print("Outside at ",x ,"  ",y, "  for angle ", ang)
+                lidar_results[round(angulo, 3)] = -1   
+                #print("Outside at ",x ,"  ",y, "  for angle ", ang)
                 break
             dist = nb_found_obstacle(int(y), int(x), y0, x0, img)
             if dist > -1:   
                 # Achamos alguma coisa
-                lidar_results[ang] = dist 
+                lidar_results[round(angulo, 3)] = dist
                 #print("Hit for ",x,  "  ",y, "  for angle ", ang)                
                 break
             # Keep going if none of the "ifs" has been triggered

@@ -23,4 +23,4 @@ O trabalho foi feito em conjunto através da plataforma Jupyter Notebook. Todas 
 
 Dentro desse módulo, encontra-se uma descrição minuciosa do que cada função elabora, e uma explicação para os valores de constantes usados (como desvio padrão, número de partículas, etc).
 
-Existem poucos commits feitos pelo grupo, porém cada um representa uma parte importante do projeto concluída. O primeiro commit foi quando a dupla conseguiu desenhar as partículas no mapa. No segundo commit, todas as 9 etapas referentes à atividade já estavam concluídas e o gif pronto. Os commits seguintes são menos relevantes, adicionando comentários e observações teóricas.
+Existem poucos commits feitos pelo grupo, porém cada um representa uma parte importante do projeto concluída. Os primeiros 2 commits são mínimos. O terceiro commit foi quando a dupla conseguiu desenhar as partículas no mapa. No quarto commit, todas as 9 etapas referentes à atividade já estavam concluídas e o gif pronto. Os commits seguintes são menos relevantes, adicionando comentários e observações teóricas.

@@ -2,9 +2,9 @@
 
 ## Filtro de Partículas e Probabilidade
 
-Por Alexandre Young e Sabrina Simão
+### Por Alexandre Young e Sabrina Simão
 
-Prof. Fabio Miranda e Igor Montagner
+### Prof. Fabio Miranda e Igor Montagner
 
 Este projeto consiste na criação de um filtro de partículas para implementar em um robo Neato. O propósito é criar um programa que permita o robô se localizar no espaço, ao ser ligado e não ter informação de onde se encontra.
 

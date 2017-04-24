@@ -8,78 +8,49 @@ import cv2
 import inspercles
 from copy import deepcopy
 reload(inspercles)
+import scipy as sp
 
 angles = np.linspace(0.0, 2*math.pi, num=8)
 #por enquanto angles sera sempre 7
 counter= 0
-
-def resample(key, particles):
-    w=0
-    best= None
-    for particle in particles:
-        if particle.w > w:
-            w= particle.w
-            best= particle
-    
-    best.w=1.0/len(particles)
-    
-    #if (key == "angle"):
-    if (True):
-        disp= math.pi
-        for i in range(len(particles)):
-            particles[i]= deepcopy(best)
-            uncertainty= apply_uncertainty(disp)
-            uncertainty-=disp
-            particles[i].theta+= uncertainty
-            particles[i].theta%= 2*math.pi
-    
-    #if (key == "position"):
-    if (True):
-        disp= 100.0
-        
-        for i in range(len(particles)):
-            #particles[i]= deepcopy(best)
-            uncertainty= apply_uncertainty(disp)
-            uncertainty-=disp
-            particles[i].x+= uncertainty
-            particles[i].x= (particles[i].x+800)%800
-            uncertainty= apply_uncertainty(disp)
-            uncertainty-=disp
-            particles[i].y+= uncertainty
-            particles[i].y= (particles[i].y+800)%800
             
-#nao esta sendo usado
-            
-def resample2(particles):
+def resample(particles):
+    #Criamos uma funcao customizada para realizar a reamostragem das particulas
+    #em proporcao a probabilidade de uma particula coincidir com a posicao do robo
+    
+    #Realizamos isso adicionando a cada particula a diferenca dela com as
+    #particulas vizinhas, normalizando a diferenca pelo peso de cada particula
             
     copy= deepcopy(particles)
     #hey_wait= 1-greatest_probability(particles)**2
-    hey_wait= 1.0/32
-    #TODO acho que existe uma relacao entre hey_wait e alpha
+    hey_wait= 1.0/64
     for p in particles:
+        print p.w
         p.w=1.0/len(particles)
         
-        diff_x=0
-        diff_y=0
-        diff_theta=0
-        for c in copy:
-            diff_x+= (c.x - p.x)*(c.w**2)
-            diff_y+= (c.y - p.y)*(c.w**2)
-            diff_theta+= (c.theta - p.theta)*(c.w**2)
-            
+        cx=np.array([c.x for c in copy])
+        cy=np.array([c.y for c in copy])
+        ctheta=np.array([c.theta for c in copy])
+        cw=np.array([c.w for c in copy])
+        
+        diff_x=np.sum((cx-p.x)*cw)
+        diff_y=np.sum((cy-p.y)*cw)
+        diff_theta=np.sum((ctheta-p.theta)*cw)
+        
         p.x+= diff_x*hey_wait
         p.y+= diff_y*hey_wait
-        p.theta+=diff_theta*hey_wait
+        p.theta+=(diff_theta%(2*math.pi))*hey_wait
         p.theta%=2*math.pi
         
    
             
 
 def create_particles(minx, miny, maxx, maxy, n):
-    """
-        Cria num particulas
-        situadas no intervalo x - var_x a x + var_x, y - var_x at'e y + var_y e theta - var_theta a theta + var_theta
-    """
+    #Cria n particulas
+    #no quadrado de aresta menor minx, miny e maior maxx, maxy
+    #com posicao aleatoria dentro quadrado
+    #e um angulo aleatorio entre 0 e 2*pi
+        
     particle_cloud = []
     for i in range(n):
         x = random.uniform(minx, maxx)
@@ -91,7 +62,12 @@ def create_particles(minx, miny, maxx, maxy, n):
     return particle_cloud
 
 def generate_movement(shape="square"):
+    #Gera movimentos para o robo, descrevendo um quadrado
+    #e girando durante o trajeto
+    
+    
     movements=[]
+    
     for j in range(3):
         if (shape=="square"):
             i=0
@@ -128,38 +104,54 @@ def generate_movement(shape="square"):
                 i+=1
         
     return movements
-        
+    
 
-movements = [[1, 0, 0], [0, 1, 0], [-2,0,0], [0, -3, 0],
-          [5,0,math.pi/12.0], [0, 8, math.pi/12.0], [-13, 0, math.pi/12],[0, -21,-math.pi/4],
-          [34, 0, 0],[55,0,0], [-89,0,0], [-144,0,0],
-          [0,0,-math.radians(90)],
-          ]
-
-def apply_uncertainty(value): 
+def apply_uncertainty(value):
+    #Calcula a incerteza do movimento, essa incerteza eh dada
+    #como um valor aleatorio de uma distribuicao normal proporcional ao
+    #movimento feito, com desvio padrao 10% do valor
+    
     if (value!=0):
         value+= np.random.normal(loc=0.0, scale=abs(0.1*value))
     return value
     
 def laser_probability(dist_roboto, dist_particle):
-    std= 1.5
-    #std=10.0 #com valores menores caio em um nan
-    #TODO: serio, qual deve ser este valor?
-    return math.e**(-(dist_roboto-dist_particle)/(2*std**2))
+    #Calcula a probabilidade de uma particula coincidir com a posicao do
+    #robo dada a leitura real de um unico laser
+    
+    #Dado que este codigo eh uma simulacao, o desvio padrao pode assumir um
+    #valor arbitrario. Escolhemos 5.0 por se aproximar do desvio real dos robos
+    #neato usados em aula
+    
+    std= 5.0
+    #TODO 5.0 acabou sendo muito pouco, valores estao extremamente dificeis de
+    #tratar, preciso aumentar por necessidade
+    std= 50.0
+    
+    #return math.e**(-(dist_roboto-dist_particle)/(2*std**2))
+    
+    return 2*sp.stats.norm.cdf(-abs(dist_roboto-dist_particle), loc=0.0, scale=std)
 
 def particle_probability(lasers_roboto, lasers_particle):
+    #Dada uma lista de lasers de uma particula e do robo, calcula
+    #o produto das probabilidades individuais de cada laser
+    #para a particula
+
     angles = np.linspace(0.0, 2*math.pi, num=8)
     #TODO: remover esse angles depois, deixar aqui por enquanto por estar meio perdido
     result=1
     
-    #print lasers_roboto.keys()
-    #print lasers_particle.keys()
     for i in range(len(angles)-1):
         result*= laser_probability(lasers_roboto[round(angles[i], 3)], lasers_particle[round(angles[i], 3)])
     
     return result
     
 def position_speculation(particle_list, pose):
+    #Dada uma lista de particulas e a posicao do robo a funcao
+    #calcula a probabilidade normalizada de cada particula coincidir com
+    #a posicao do robo
+    
+    
     color_image = cv2.imread("sparse_obstacles.png")
     np_image = cv2.cvtColor(color_image, cv2.COLOR_BGR2GRAY)
     
@@ -172,12 +164,17 @@ def position_speculation(particle_list, pose):
     alpha=0
     for particle in particle_list:
         alpha+=particle.w
-        
+    
     alpha=1.0/alpha
+    
     for particle in particle_list:
         particle.w*= alpha
     
 def greatest_probability(particles):
+    #Procura a particula com a maior probabilidade
+    #de coincidir com o robo e devolve o valor dessa
+    #probabilidade
+    
     w=0
     for particle in particles:
         if particle.w > w:
@@ -185,12 +182,16 @@ def greatest_probability(particles):
     
     return w
 
-def uncertain_movements(particles, movements):
+def uncertain_movements(particles, movements, pose):
+    #Dado uma lista de movimentos para o robo, aplica esse movimento
+    #num mapa frame-a-frame calculando tambem um desvio padrao probabilistico da
+    #trajetoria e termina criando um gif representando o trajeto
+    
+    #Adicionalmente, tambem chamamos a funcao de resample para as particulas
 
     plt.ioff() # Desliga o modo interativo, para nao aparecerem muitas imagens no meio
 
     frames = 1
-    pose=[400, 400, 0]
     color_image = cv2.imread("sparse_obstacles.png")
     np_image = cv2.cvtColor(color_image, cv2.COLOR_BGR2GRAY)
     for delta in movements:
@@ -211,8 +212,8 @@ def uncertain_movements(particles, movements):
         position_speculation(particles, pose)
         
         
-        
-        resample2(particles)
+        if greatest_probability(particles)>0.9:
+            resample(particles)
         #
         #print("iteracao")
         #for particle in particles:

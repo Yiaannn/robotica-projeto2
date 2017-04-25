@@ -277,3 +277,12 @@ def nb_simulate_lidar(robot_pose, angles, img):
 
             
     return lidar_results, result_img
+    
+    
+'''
+    Nota
+    
+    Foi alterado o método nb_simulate_lidar para que os ângulos sejam sempre dados em relação à posição de pose
+    
+    Foi alterado também o método de desenho de partículas para suportar transparência em relação a seu atributo w (weight)
+'''

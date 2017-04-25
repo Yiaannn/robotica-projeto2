@@ -98,3 +98,10 @@ class Particle(object):
         for i in inds:
             samples.append(deepcopy(choices[int(i)]))
         return samples
+        
+'''
+    Nota
+    
+    Foram adcionados métodos à classe Particle para permitir acessar seus atributos como índices
+    Ex: particle[0] == particle.x
+'''

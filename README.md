@@ -6,6 +6,8 @@
 
 ### Prof. Fabio Miranda e Igor Montagner
 
+Gif: https://github.com/Yiaannn/robotica-projeto2/blob/master/syteste.gif
+
 Este projeto consiste na criação de um filtro de partículas para implementar em um robo Neato. O propósito é criar um programa que permita o robô se localizar no espaço, ao ser ligado e não ter informação de onde se encontra.
 
 Isso é necessário, pois os robôs não costumam ter um gps do local em que se encontra, portanto precisa se "descobrir" geograficamente. Contudo, ele tem um mapa do lugar que vai percorrer, então sabe onde estão as paredes e obstáculos.
@@ -23,6 +25,6 @@ O trabalho foi feito em conjunto através da plataforma Jupyter Notebook. Todas 
 
 Dentro desse módulo, encontra-se uma descrição minuciosa do que cada função elabora, e uma explicação para os valores de constantes usados (como desvio padrão, número de partículas, etc).
 
-Existem poucos commits feitos pelo grupo, porém cada um representa uma parte importante do projeto concluída. Os primeiros 2 commits são mínimos. O terceiro commit foi quando a dupla conseguiu desenhar as partículas no mapa. No quarto commit, todas as 9 etapas referentes à atividade já estavam concluídas e o gif pronto. Os commits seguintes são menos relevantes, adicionando comentários e observações teóricas.
+Existem poucos commits feitos pelo grupo, porém cada um representa uma parte importante do projeto concluída. Os primeiros 2 commits são mínimos. O terceiro commit foi quando a dupla conseguiu desenhar as partículas no mapa. No quarto commit, todas as 9 etapas referentes à atividade já estavam concluídas e o gif quase pronto. Os commits seguintes são menos relevantes, adicionando comentários e observações teóricas, assim como maiores iterações para o gif.
 
 Por último, vale lembrar que foram feitas pequenas modificações nos módulos originais do projeto. O módulo Pf e Inspercles tiveram algumas alterações necessárias, e estão devidamente comentadas.

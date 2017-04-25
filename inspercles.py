@@ -82,7 +82,7 @@ def nb_draw_particle_cloud(particles, ax):
         ax - eixo
     """
     for p in particles:
-        nb_draw_arrow(p.x, p.y, p.theta, ax, particle_size, color='b', alpha=(0.1 + 0.9*p.w))
+        nb_draw_arrow(p.x, p.y, p.theta, ax, particle_size, color='b', alpha=(0.2 + 0.8*(p.w**2)))
 
 def normalize_particles(particle_cloud):
     # 

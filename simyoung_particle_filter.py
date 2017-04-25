@@ -23,9 +23,8 @@ def resample(particles):
             
     copy= deepcopy(particles)
     #hey_wait= 1-greatest_probability(particles)**2
-    hey_wait= 1.0/64
+    hey_wait= 1.0/32
     for p in particles:
-        print p.w
         p.w=1.0/len(particles)
         
         cx=np.array([c.x for c in copy])
@@ -214,10 +213,6 @@ def uncertain_movements(particles, movements, pose):
         
         if greatest_probability(particles)>0.9:
             resample(particles)
-        #
-        #print("iteracao")
-        #for particle in particles:
-        #    print(particle.w)
            
         # Simula a leitura do lidar
         
